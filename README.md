@@ -1,70 +1,156 @@
-# Getting Started with Create React App
+# 📚 Personalized Book Recommendation System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application that recommends books to users based on their reading habits and preferences. This project uses **FastAPI** for the backend, **MySQL** for database management, and **React** for a clean and interactive frontend. It implements a **hybrid recommendation system** using both **content-based** (favorite genre) and **collaborative filtering** (similar users) techniques.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## **Features**
 
-### `npm start`
+- **User Management**: Add new users and select active users.
+- **Book Management**: Add books with title, author, genre, and cover image.
+- **Read Books Tracking**: Mark books as read and provide ratings.
+- **Hybrid Recommendations**:
+  - Recommend books in the user's favorite genre.
+  - Suggest books read by similar users (collaborative filtering).
+- **Interactive UI**:
+  - Tab-based navigation between "Read Books" and "Recommended Books".
+  - Book cards with cover images, title, author, genre, and star rating.
+  - Favorite genre highlighted for quick insights.
+- **Responsive Design**: Clean, professional, and modern UI.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## **Tech Stack**
 
-### `npm test`
+- **Frontend**: React.js, CSS  
+- **Backend**: Python, FastAPI  
+- **Database**: MySQL  
+- **Other**: Axios / Fetch API for client-server communication  
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## **Folder Structure**
+project-root/
+├─ backend/
+│ └─ main.py
+├─ frontend/
+│ ├─ src/
+│ │ ├─ components/
+│ │ │ ├─ UserSelect.js
+│ │ │ ├─ UserSelect.css
+│ │ │ ├─ BookList.js
+│ │ │ ├─ BookList.css
+│ │ │ ├─ AddUser.js
+│ │ │ ├─ AddUser.css
+│ │ │ ├─ AddBook.js
+│ │ │ ├─ AddBook.css
+│ │ │ ├─ MarkRead.js
+│ │ │ └─ MarkRead.css
+│ │ ├─ App.js
+│ │ └─ App.css
+├─ .gitignore
+└─ README.md
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## **Getting Started**
 
-### `npm run eject`
+### **Prerequisites**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Python 3.9+
+- Node.js 18+
+- MySQL Server
+- Git
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### **Backend Setup (FastAPI + MySQL)**
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+1. **Create a virtual environment and activate it**
 
-## Learn More
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# macOS/Linux
+source venv/bin/activate
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+2. **Install dependencies**
+pip install fastapi uvicorn mysql-connector-python
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+3. **Create MySQL Database & Tables**
 
-### Code Splitting
+CREATE DATABASE bookdb;
+USE bookdb;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50)
+);
 
-### Analyzing the Bundle Size
+CREATE TABLE books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    author VARCHAR(50),
+    genre VARCHAR(50),
+    cover_url VARCHAR(255)
+);
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+CREATE TABLE user_books (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    book_id INT,
+    rating INT,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (book_id) REFERENCES books(id)
+);
 
-### Making a Progressive Web App
+4. **Run the FastAPI server**
+uvicorn main:app --reload
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### **Frontend Setup (React)**
 
-### Advanced Configuration
+1.**Navigate to the frontend folder**
+cd frontend
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+2.**Install dependencies**
+npm install
 
-### Deployment
+3.**Start the React app**
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+The frontend will run on http://localhost:3000 and communicate with FastAPI backend.
+API Endpoints
+GET /users → Get list of users
+POST /users → Add a new user
+GET /books → Get all books
+POST /books → Add a new book
+POST /user_books → Mark a book as read and rate it
+GET /recommendations/{user_id} → Get book recommendations with cover and rating
 
-### `npm run build` fails to minify
+4.**How Recommendations Work**
+Identify books already read by the user.
+Determine the user's favorite genre from past reads.
+Suggest books in favorite genre the user hasn’t read yet.
+Recommend books read by similar users (collaborative filtering).
+Merge results, remove duplicates, and return a list with cover images and ratings.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+5.**Future Enhancements**
+Add search and filter options for books.
+Sort recommendations by rating or popularity.
+Enable user profiles with reading history and statistics.
+Add authentication for multiple users.
+
+Screenshots / UI Preview
+![alt text](image.png)
+
+
+
+### License
+
+This project is MIT Licensed.
+---
+This README is **professional, concise, and explains both backend and frontend setup**.  
+If you want, I can also **add a small “Sample Data Section”** with **real book titles, authors, cover URLs, and ratings** so anyone can quickly populate the database and see it working.  
+Do you want me to add that?
