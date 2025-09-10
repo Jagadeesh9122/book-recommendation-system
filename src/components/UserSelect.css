@@ -1,0 +1,14 @@
+.user-select {
+  margin: 10px 0;
+}
+
+.user-select label {
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.user-select select {
+  padding: 5px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
